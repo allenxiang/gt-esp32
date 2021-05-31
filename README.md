@@ -1,5 +1,5 @@
 # gt-esp32
-Home brew ESP32 security panel with 4 channel relay, 18 channel GPIO, bluetooth, wifi, ethernet, POE, SD card reader, screw terminals.
+Home brew ESP32 security panel with 4 channel relay, 19 channel GPIO, bluetooth, wifi, ethernet, screw terminals.
 
 PCB front:
 
