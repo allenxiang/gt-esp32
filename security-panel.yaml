@@ -1,0 +1,327 @@
+# ##################################
+# Wireless Tag WT32 ETH01
+# ##################################
+
+substitutions:
+  device_name: security-panel
+  friendly_name: WT32 ETH01 01
+  icon: "mdi:lightbulb"
+
+esphome:
+  name: ${device_name}
+  platform: ESP32
+  board: nodemcu-32s
+
+ethernet:
+  type: LAN8720
+  mdc_pin: GPIO23
+  mdio_pin: GPIO18
+  clk_mode: GPIO0_IN
+  phy_addr: 1
+  power_pin: GPIO16
+
+logger:
+  level: DEBUG
+
+api:
+  password: !secret esphome_api_password
+
+ota:
+  password: !secret esphome_ota_password
+
+i2c:
+  sda: 14
+  scl: 15
+  scan: true
+  id: bus_a
+
+mcp23017:
+  - id: mcp23017_hub
+    i2c_id: bus_a
+    address: 0x20
+
+binary_sensor:
+  - platform: gpio
+    device_class: door
+    name: Front Door
+    pin:
+      mcp23017: mcp23017_hub
+      number: 0
+      mode: INPUT_PULLUP
+      inverted: False
+    id: front_door
+
+  - platform: gpio
+    device_class: door
+    name: Back Door
+    pin:
+      mcp23017: mcp23017_hub
+      number: 1
+      mode: INPUT_PULLUP
+      inverted: False
+    id: back_door
+
+  - platform: gpio
+    device_class: motion
+    name: Living Motion
+    pin:
+      mcp23017: mcp23017_hub
+      number: 2
+      mode: INPUT_PULLUP
+      inverted: False
+    id: living_motion
+
+  - platform: gpio
+    device_class: window
+    name: Study Windows
+    pin:
+      mcp23017: mcp23017_hub
+      number: 3
+      mode: INPUT_PULLUP
+      inverted: False
+    id: study_windows
+
+  - platform: gpio
+    device_class: window
+    name: Master Windows
+    pin:
+      mcp23017: mcp23017_hub
+      number: 4
+      mode: INPUT_PULLUP
+      inverted: False
+    id: master_windows
+
+  - platform: gpio
+    device_class: door
+    name: Garage Entry
+    pin:
+      mcp23017: mcp23017_hub
+      number: 5
+      mode: INPUT_PULLUP
+      inverted: False
+    id: garage_entry
+
+  - platform: gpio
+    device_class: garage_door
+    name: Garage Door 1
+    pin:
+      mcp23017: mcp23017_hub
+      number: 6
+      mode: INPUT_PULLUP
+      inverted: False
+    id: garage_door_1
+
+  - platform: gpio
+    device_class: garage_door
+    name: Garage Door 2
+    pin:
+      mcp23017: mcp23017_hub
+      number: 7
+      mode: INPUT_PULLUP
+      inverted: False
+    id: Garage_door_2
+
+  - platform: gpio
+    device_class: window
+    name: Upstairs Windows
+    pin:
+      mcp23017: mcp23017_hub
+      number: 8
+      mode: INPUT_PULLUP
+      inverted: False
+    id: upstairs_windows
+
+
+# - platform: gpio
+#   name: Sensor 11
+#   pin:
+#     mcp23017: mcp23017_hub
+#     number: 10
+#     mode: INPUT_PULLUP
+#     inverted: False
+#   id: sensor11
+
+# - platform: gpio
+#   name: Sensor 12
+#   pin:
+#     mcp23017: mcp23017_hub
+#     number: 11
+#     mode: INPUT_PULLUP
+#     inverted: False
+#   id: sensor12
+
+# - platform: gpio
+#   name: Sensor 13
+#   pin:
+#     mcp23017: mcp23017_hub
+#     number: 12
+#     mode: INPUT_PULLUP
+#     inverted: False
+#   id: sensor13
+
+# - platform: gpio
+#   name: Sensor 14
+#   pin:
+#     mcp23017: mcp23017_hub
+#     number: 13
+#     mode: INPUT_PULLUP
+#     inverted: False
+#   id: sensor14
+
+# - platform: gpio
+#   name: Sensor 15
+#   pin:
+#     mcp23017: mcp23017_hub
+#     number: 14
+#     mode: INPUT_PULLUP
+#     inverted: False
+#   id: sensor15
+
+# - platform: gpio
+#   name: Sensor 16
+#   pin:
+#     mcp23017: mcp23017_hub
+#     number: 15
+#     mode: INPUT_PULLUP
+#     inverted: False
+#   id: sensor16
+
+output:
+  - platform: ledc
+    pin: GPIO12
+    id: output_buzzer
+
+script:
+  - id: reminder_buzzer_script
+    then:
+    - while:
+        condition:
+          lambda: return true;
+        then:
+          - output.turn_on: output_buzzer
+          - output.ledc.set_frequency:
+              id: output_buzzer
+              frequency: "1000Hz"
+          - output.set_level:
+              id: output_buzzer
+              level: "80%"
+          - delay: 1s
+          - output.turn_off: output_buzzer
+          - delay: 10s
+
+
+switch:
+  - platform: restart
+    name: "Restart Switch"
+    id: restart_switch
+    internal: True
+
+  - platform: gpio
+    name: "Garage Switch 1"
+    id: switch_garage_1
+    pin: GPIO32
+    restore_mode: ALWAYS_OFF
+    inverted: True
+    internal: True
+
+  - platform: gpio
+    name: "Garage Switch 2"
+    id: switch_garage_2
+    pin: GPIO33
+    restore_mode: ALWAYS_OFF
+    inverted: True
+    internal: True
+
+  - platform: gpio
+    name: "Siren"
+    id: siren
+    pin: GPIO5
+    restore_mode: ALWAYS_OFF
+    inverted: True
+
+  - platform: template
+    name: "Restart Security Panel"
+    id: restart_security_panel
+    turn_on_action:
+    - switch.template.publish:
+        id: restart_security_panel
+        state: ON
+    - switch.turn_on: restart_switch
+    - delay: 10ms
+    - switch.turn_off: restart_switch
+    - switch.template.publish:
+        id: restart_security_panel
+        state: OFF
+
+  - platform: template
+    name: "Garage Control 1"
+    id: garage_control_1
+    turn_on_action:
+    - switch.template.publish:
+        id: garage_control_1
+        state: ON
+    - switch.turn_on: switch_garage_1
+    - delay: 500ms
+    - switch.turn_off: switch_garage_1
+    - switch.template.publish:
+        id: garage_control_1
+        state: OFF
+
+  - platform: template
+    name: "Garage Control 2"
+    id: garage_control_2
+    turn_on_action:
+    - switch.template.publish:
+        id: garage_control_2
+        state: ON
+    - switch.turn_on: switch_garage_2
+    - delay: 500ms
+    - switch.turn_off: switch_garage_2
+    - switch.template.publish:
+        id: garage_control_2
+        state: OFF
+
+  - platform: template
+    name: "Door Chime"
+    id: door_chime
+    turn_on_action:
+    - switch.template.publish:
+        id: door_chime
+        state: ON
+    - output.turn_on: output_buzzer
+    - output.ledc.set_frequency:
+        id: output_buzzer
+        frequency: "1000Hz"
+    - output.set_level:
+        id: output_buzzer
+        level: "80%"
+    - delay: 100ms
+    - output.turn_off: output_buzzer
+    - switch.template.publish:
+        id: door_chime
+        state: OFF
+
+  - platform: template
+    name: "Reminder Buzzer"
+    id: reminder_buzzer
+    turn_on_action:
+    - script.stop: reminder_buzzer_script
+    - output.turn_off: output_buzzer
+    - script.execute: reminder_buzzer_script
+    - switch.template.publish:
+        id: reminder_buzzer
+        state: ON
+    turn_off_action:
+    - script.stop: reminder_buzzer_script
+    - output.turn_off: output_buzzer
+    - switch.template.publish:
+        id: reminder_buzzer
+        state: OFF
+
+
+time:
+  - platform: homeassistant
+    on_time:
+      - cron: '0 10 04 * * *'
+        then:
+          - switch.turn_on: restart_security_panel
