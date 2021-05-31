@@ -3,8 +3,8 @@ Home brew ESP32 security panel with 4 channel relay, 19 channel GPIO, bluetooth,
 
 PCB front:
 
-![PCB front](files/pcb2.1-f.jpg?raw=true "Front")
+![PCB front](files/Front_2021-05-31_130607.png?raw=true "Front")
 
 PCB back:
 
-![PCB back](files/pcb2.1-b.jpg?raw=true "Back")
+![PCB back](files/Back_2021-05-31_130720.png?raw=true "Back")
