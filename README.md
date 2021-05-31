@@ -1,7 +1,7 @@
 # gt-esp32
 Home brew ESP32 security panel with 4 channel relay, 19 channel GPIO, bluetooth, wifi, ethernet, screw terminals.
 
-Please see this example esphome yaml file for running esphome on this panel.
+Please see [this example esphome yaml file](security-panel.yaml) for running esphome on this panel.
 
 PCB front:
 
