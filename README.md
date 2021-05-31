@@ -9,12 +9,15 @@ PCB back:
 
 ![PCB back](files/Back_2021-05-31_130720.png?raw=true "Back")
 
-Assambled Board
+Assambled Board:
+
 ![Assambled Board](files/Board_20210531131300.jpg?raw=true "Back")
 
-Installed Product
+Installed Product:
+
 ![Installed Product](files/Installed_20210531131232.jpg?raw=true "Back")
 
-Home Assistant UI
+Home Assistant UI:
+
 ![Home Assistant UI](files/home_assistant_2021-05-31_131757.png?raw=true "Back")
 
