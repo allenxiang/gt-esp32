@@ -3,6 +3,8 @@ Home brew ESP32 security panel with 4 channel relay, 19 channel GPIO, bluetooth,
 
 Please see [this example esphome yaml file](security-panel.yaml) for running esphome on this panel.
 
+I have a few extra boards manufactured by a professional company. If you are interested in getting one, please let me know: xiangzsh at gmail dot com.
+
 PCB front:
 
 ![PCB front](files/Front_2021-05-31_130607.png?raw=true "Front")
